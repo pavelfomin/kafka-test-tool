@@ -1,0 +1,82 @@
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springBootDependencyManagement}"
+    id 'idea'
+    id 'groovy'
+    id 'nebula.release' version "17.1.0"
+    id 'nebula.maven-publish' version "18.4.0"
+    id 'jacoco'
+    id 'maven-publish'
+}
+
+allprojects {
+    group 'com.droidablebee'
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+//https://docs.gradle.org/current/userguide/upgrading_version_6.html#publishing_spring_boot_applications
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation('org.apache.avro:avro:1.11.0')
+    implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '5.3.0'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.spockframework:spock-spring:2.3-groovy-3.0'
+//    testImplementation "org.hamcrest:hamcrest:2.2"
+//    testImplementation "cglib:cglib-nodep:3.2.12"
+//    testImplementation "org.objenesis:objenesis:2.1"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {url "https://packages.confluent.io/maven"}
+}
+
+test {
+    useJUnitPlatform()
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)")
+    }
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.required = true
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/pavelfomin/kafka-test-tool"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}

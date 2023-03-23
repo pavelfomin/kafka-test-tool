@@ -1,0 +1,18 @@
+target
+bin
+.settings
+.classpath
+.project
+.idea
+*.iml
+
+# gradle
+build
+.gradle
+
+# mac
+**/.DS_Store
+
+# github workflow
+settings.xml
+toolchains.xml

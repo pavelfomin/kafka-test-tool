@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: kafka-test-tool
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+      auto.register.schemas: false
+      value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+    consumer:
+      group-id: ${spring.application.name}-${user.name}${app.kafka.randomGroupIdSuffix}
+      auto-offset-reset: earliest
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
