@@ -7,7 +7,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import spock.lang.Specification
 
 @SpringBootTest
-@EmbeddedKafka
+@EmbeddedKafka(bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class KafkaTestToolApplicationISpec extends Specification {
 
 	@Autowired

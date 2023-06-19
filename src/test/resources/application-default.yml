@@ -1,5 +1,6 @@
 spring:
   kafka:
+    bootstrap-servers: embeddedkafka:9999
     properties:
       schema.registry.url: http://mockurl
 
