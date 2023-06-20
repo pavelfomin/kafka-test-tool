@@ -1,5 +1,6 @@
 package com.droidablebee.kafka.tool;
 
+import com.droidablebee.kafka.tool.config.ExcludeFromJacocoGeneratedReport;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,6 +12,7 @@ public class KafkaTestToolApplication {
 
     static final String RANDOM_GROUP_ID = "--random-group-id";
 
+    @ExcludeFromJacocoGeneratedReport("This method is not used by the Spring integration tests annotated with @SpringBootTest")
     public static void main(String[] args) {
 
         System.setProperty("app.kafka.randomGroupIdSuffix", generateRandomGroupIdSuffix(args));
@@ -21,7 +23,7 @@ public class KafkaTestToolApplication {
 
         String randomGroupIdSuffix = "";
 
-        if(Arrays.asList(args).contains(RANDOM_GROUP_ID)) {
+        if (Arrays.asList(args).contains(RANDOM_GROUP_ID)) {
             randomGroupIdSuffix = "-" + UUID.randomUUID();
         }
 
