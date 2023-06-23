@@ -56,3 +56,10 @@ Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.10+8-LTS-162, mixed mode)
 ## Running tests
 `./gradlew clean test`
 
+## Publish test event
+```shell
+docker exec -it broker bash
+kafka_topic=event
+kafka_url=localhost:9092
+kafka-console-producer --bootstrap-server $kafka_url --topic $kafka_topic --property "parse.key=true" --property "key.separator=:"
+```
