@@ -12,7 +12,6 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 @Service
 public class KafkaConsumer {
@@ -28,8 +27,10 @@ public class KafkaConsumer {
     }
 
     private void process(ConsumerRecord<String, ?> consumerRecord, MessageHeaders headers) {
-        String value = (String) consumerRecord.value();
-        if (value.startsWith("bad")) {
+
+        String key = consumerRecord.key();
+
+        if (key != null && key.startsWith("bad")) {
             throw new RuntimeException(
                     "Test processing failure for key: " + consumerRecord.key() + " value:" + consumerRecord.value());
         }
@@ -62,6 +63,7 @@ public class KafkaConsumer {
                 attempts == null ? 1 : ByteBuffer.wrap(attempts).getInt(),
                 consumerRecord.key(),
                 consumerRecord.value(),
+                headers,
                 stackTrace == null ? "" : new String(stackTrace)
         );
     }
